@@ -10,18 +10,18 @@ const SlidingImage: React.FC<SlidingImageProps> = () => {
   const images = ["https://images-eu.ssl-images-amazon.com/images/G/31/INSLGW/pc_unrec_refresh._CB555261616_.jpg","https://images-eu.ssl-images-amazon.com/images/G/31/IMG20/Home/2024/June/GW/Hero/V1/V2/V3/BucketsMugsPC-3000._CB554160399_.jpg",
     "https://images-eu.ssl-images-amazon.com/images/G/31/img23/Beauty/GW/Skincare-trust-Mobfdfo._CB554429490_.jpg",
   ] // ... (add more images to the array)]
-  const timeoutRef = useRef(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleNext = () => {
     const nextIndex = (currentIndex + 1) % images.length;
     setCurrentIndex(nextIndex);
-    clearTimeout(timeoutRef.current);
+    clearTimeout(timeoutRef.current!);
   };
 
   const handlePrev = () => {
     const prevIndex = (currentIndex - 1 + images.length) % images.length;
     setCurrentIndex(prevIndex);
-    clearTimeout(timeoutRef.current);
+    clearTimeout(timeoutRef.current!);
   };
 
   useEffect(() => {
@@ -29,7 +29,11 @@ const SlidingImage: React.FC<SlidingImageProps> = () => {
       handleNext();
     }, 5000); // Change 5000 to adjust slide transition time (in milliseconds)
 
-    return () => clearTimeout(timeoutRef.current);
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, [currentIndex, images.length]);
 
   return (
