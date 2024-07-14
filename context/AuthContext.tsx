@@ -1,78 +1,106 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, ReactNode, useContext } from 'react';
+import { useRouter } from 'next/router';
 import axios from 'axios';
-import HTTP from '@/utils/authHttpRequests';
 
-// Define the shape of your user object
 interface User {
-    name: string;
     email: string;
-    // Add more fields as needed
+    name: string;
+
+    // Add other user properties as needed
 }
 
-interface AuthContextType {
+interface AuthContextProps {
     user: User | null;
-    login: (email: string, password: string) => Promise<void>;
+    loading: boolean;
+    isLoggedIn: boolean;
+    login: (username: string, password: string) => Promise<void>;
+    oauthLogin: () => void;
     logout: () => void;
-    isAuthenticated: () => boolean;
 }
 
-const AuthContext = createContext<AuthContextType>({
-    user: null,
-    login: () => Promise.resolve(),
-    logout: () => { },
-    isAuthenticated: () => false,
-});
+const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
-export const useAuth = () => useContext(AuthContext);
+interface AuthProviderProps {
+    children: ReactNode;
+}
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
+    const apiGateway = process.env.NEXT_PUBLIC_API_URL;
+    const userServiceId = process.env.NEXT_PUBLIC_USER_SERVICE;
 
     useEffect(() => {
-        // Check if user is already logged in (e.g., token in localStorage)
-        const token = localStorage.getItem('access_token');
+        const token = localStorage.getItem('token');
         if (token) {
-            // Fetch user details based on your authentication mechanism
-            // HTTP.GET('/auth/user')
-            //     .then(response => setUser(response.data))
-            //     .catch(error => console.error('Error fetching user:', error));
+            // Validate the token
+            axios.get(`${apiGateway}/${userServiceId}/auth/validate-token`, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+                .then(() => {
+                    // If token is valid, fetch user details
+                    fetchUserDetails(token);
+                })
+                .catch(() => {
+                    localStorage.removeItem('token');
+                    setLoading(false);
+                });
+        } else {
+            setLoading(false);
         }
     }, []);
 
-    const login = async (email: string, password: string) => {
+    const fetchUserDetails = async (token: string) => {
         try {
-            // Example of authentication logic
-            const response = await axios.post('http://localhost:8081/auth2/login', { email, password }
-            );
-            const { access_token } = response.data;
-
-            // Store token in localStorage
-            localStorage.setItem('access_token', access_token);
-
-            // Fetch user details
-            // const userResponse = await axios.get('http://localhost:8081/auth/user', {
-            //     headers: {
-            //         Authorization: `Bearer ${access_token}`,
-            //     },
-            // });
-
-            //setUser(userResponse.data);
+            const response = await axios.get(`${apiGateway}/${userServiceId}/auth/user`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setUser(response.data);
         } catch (error) {
-            console.error('Login error:', error);
+            console.error('Failed to fetch user details', error);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const logout = () => {
-        // Clear token from localStorage
-        localStorage.removeItem('token');
-        setUser(null);
+    const login = async (username: string, password: string) => {
+        try {
+            debugger
+            const response = await axios.post(`${apiGateway}/${userServiceId}/auth2/login`, { email: username, password });
+            const token = response?.data?.access_token;
+            localStorage.setItem('token', token);
+            await fetchUserDetails(token);
+            window.location.href='/';
+        } catch (error) {
+            console.error('Login failed', error);
+        }
     };
 
-    const isAuthenticated = () => !!user;
+    const oauthLogin = () => {
+        const oauthUrl = `${process.env.NEXT_PUBLIC_OAUTH_AUTHORIZATION_URL}?client_id=${process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URI}&response_type=code&scope=${process.env.NEXT_PUBLIC_OAUTH_SCOPE}`;
+        window.location.href = oauthUrl;
+    };
+
+    const logout = () => {
+        localStorage.removeItem('token');
+        setUser(null);
+        router.push('/login');
+    };
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>
+        <AuthContext.Provider value={{ user, login, oauthLogin, logout, loading, isLoggedIn: !!user }}>
             {children}
         </AuthContext.Provider>
     );
 };
+
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
+};
+
+export default AuthContext;

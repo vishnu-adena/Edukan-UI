@@ -1,9 +1,9 @@
 // components/CardCarousel.tsx
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import product from '@/utils/productHTTP';
+// import product from '@/utils/productHTTP';
 import SlidingImage from "./SlidingImages"
-import CircularLoading from '@/common Helpers/circularLoading';
+import {CircularLoading} from '@/common Helpers/circularLoading';
 import axios from 'axios';
 
 interface CardProps {

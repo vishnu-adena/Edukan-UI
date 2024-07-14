@@ -1,22 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { getAccessToken, removeAccessToken } from '@/utils/auth';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import MenuIcon from '@mui/icons-material/Menu';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
+import useAuth from '../customhooks/useAuth';
 
 const Header: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const { isLoggedIn, logout, oauthLogin } = useAuth();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-
-  useEffect(() => {
-    setIsLoggedIn(!!getAccessToken());
-  }, []);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -28,12 +24,6 @@ const Header: React.FC = () => {
 
   const handleDrawerToggle = () => {
     setDrawerOpen(!drawerOpen);
-  };
-
-  const logout = () => {
-   // removeAccessToken();
-    setIsLoggedIn(false);
-    window.location.href = '/login';
   };
 
   return (
@@ -132,6 +122,9 @@ const Header: React.FC = () => {
               <Link href="/registration" passHref>
                 <div className="block px-4 py-2 cursor-pointer hover:bg-gray-700 hover:text-white">Register</div>
               </Link>
+              <button onClick={oauthLogin} className="block px-4 py-2 cursor-pointer hover:bg-gray-700 hover:text-white">
+                E-Dukan OAuth2
+              </button>
             </>
           )}
           <Link href="/cart" passHref>

@@ -1,6 +1,3 @@
-// RegistrationPage.tsx
-
-import HTTP from '@/utils/httpRequests';
 import axios from 'axios';
 import React, { useState } from 'react';
 
@@ -11,6 +8,8 @@ const RegistrationPage: React.FC = () => {
     const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const registration_Url = `${process.env.NEXT_PUBLIC_API_URL}/${process.env.NEXT_PUBLIC_USER_SERVICE}`
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
@@ -18,36 +17,29 @@ const RegistrationPage: React.FC = () => {
         console.log('Form values:', { name, email, password, rememberMe });
 
         try {
-            debugger
-            const response = await fetch('http://localhost:8081/auth2/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    name,
-                    email,
-                    password,
-    
-                }),
+            const response = await axios.post(`${registration_Url}/auth2/register`, {
+                name,
+                email,
+                password,
             });
 
-            if (!response.ok) {
+            if (response.status !== 200) {
                 throw new Error('Registration failed');
-            }
-            else{
+            } else {
                 window.location.href = '/RegistrationSuccess';
             }
 
-            // Handle successful registration (e.g., redirect to login page)
             console.log('Registration successful!');
         } catch (error) {
-            setError("error.message");
+            if (axios.isAxiosError(error) && error.response) {
+                setError(error.response.data.message || 'Registration failed');
+            } else {
+                setError('Registration failed');
+            }
         } finally {
             setLoading(false);
         }
     };
-
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">

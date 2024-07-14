@@ -1,26 +1,25 @@
-// pages/sso-login.tsx
 import React, { useState } from 'react';
 import Head from 'next/head';
 import Logo from '../public/logo.jpg';
 import Image from 'next/image';
-import { useAuth } from "@/context/AuthContext";
-import { getAuthUrl } from '@/utils/auth';
+import { useAuth } from '../context/AuthContext';
+import {LoadingOverlay} from '../common Helpers/circularLoading'; // Import the overlay
 
 const SSOLogin: React.FC = () => {
-    const { login: contextLogin } = useAuth();
+    const { login: contextLogin, oauthLogin, loading } = useAuth(); // Use loading state
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [isLoading,setIsLoading]= useState<boolean>(false)
 
-    const ssoLogin = () => {
-        window.location.href = getAuthUrl();
+    const handleSSOLogin = () => {
+        oauthLogin();
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
-        debugger
         e.preventDefault();
+        setIsLoading(true)
         try {
             await contextLogin(email, password);
-            window.location.href = '/';
         } catch (error) {
             console.error('Login failed:', error);
             const errorMessage = document.getElementById('error-message');
@@ -28,6 +27,9 @@ const SSOLogin: React.FC = () => {
                 errorMessage.classList.remove('hidden');
                 errorMessage.textContent = 'Invalid email or password';
             }
+        }
+        finally{
+            setIsLoading(false)
         }
     };
 
@@ -109,20 +111,24 @@ const SSOLogin: React.FC = () => {
                         <div className="text-sm text-center">
                             <p className="text-gray-600">Or sign in with</p>
                             <div className="flex space-x-4 justify-center mt-3">
-                                <button className="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md"
-                                    onClick={ssoLogin}>
+                                <button 
+                                    type="button"
+                                    className="text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md"
+                                    onClick={handleSSOLogin}
+                                >
                                     E-Dukan OAuth2
                                 </button>
-                                <button className="text-white bg-gray-800 hover:bg-gray-900 px-4 py-2 rounded-md">
+                                <button type="button" className="text-white bg-gray-800 hover:bg-gray-900 px-4 py-2 rounded-md">
                                     GitHub
                                 </button>
-                                <button className="text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md">
+                                <button type="button" className="text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-md">
                                     Microsoft
                                 </button>
                             </div>
                         </div>
                     </form>
                 </div>
+                {isLoading && <LoadingOverlay />} {/* Show the overlay when loading */}
             </div>
         </>
     );
