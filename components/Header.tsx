@@ -11,6 +11,7 @@ import useAuth from '../customhooks/useAuth';
 
 const Header: React.FC = () => {
   const { isLoggedIn, logout, oauthLogin } = useAuth();
+  
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
 

@@ -1,5 +1,8 @@
 // pages/ContactUsPage.tsx
 
+import FileUploader from "@/commonHelpers/fileUploader";
+import DragAndDropUpload from "./dragAndDrop";
+
 const ContactUsPage: React.FC = () => {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -10,6 +13,7 @@ const ContactUsPage: React.FC = () => {
           <label htmlFor="fileInput">Choose a file:</label>
           <input type="file" id="fileInput" />
         </div>
+        <FileUploader onUpload={()=>"hello"}/>
       </div>
 
     );

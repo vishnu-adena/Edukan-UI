@@ -16,6 +16,7 @@ interface AuthContextProps {
     login: (username: string, password: string) => Promise<void>;
     oauthLogin: () => void;
     logout: () => void;
+    token:string|null;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -27,12 +28,14 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
+    const [token, setToken] = useState<string | null>(null);
     const router = useRouter();
-    const apiGateway = process.env.NEXT_PUBLIC_API_URL;
+    const apiGateway = '/api/';
     const userServiceId = process.env.NEXT_PUBLIC_USER_SERVICE;
 
     useEffect(() => {
         const token = localStorage.getItem('token');
+        setToken(token)
         if (token) {
             // Validate the token
             axios.get(`${apiGateway}/${userServiceId}/auth/validate-token`, {
@@ -78,7 +81,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     const oauthLogin = () => {
-        const oauthUrl = `${process.env.NEXT_PUBLIC_OAUTH_AUTHORIZATION_URL}?client_id=${process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URI}&response_type=code&scope=${process.env.NEXT_PUBLIC_OAUTH_SCOPE}`;
+        const oauthUrl = `/api/userservice/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_OAUTH_REDIRECT_URI}&response_type=code&scope=${process.env.NEXT_PUBLIC_OAUTH_SCOPE}`;
         window.location.href = oauthUrl;
     };
 
@@ -89,7 +92,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, oauthLogin, logout, loading, isLoggedIn: !!user }}>
+        <AuthContext.Provider value={{ user, login, oauthLogin, logout, loading, isLoggedIn: !!user ,token}}>
             {children}
         </AuthContext.Provider>
     );

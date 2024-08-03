@@ -3,7 +3,7 @@ import Head from 'next/head';
 import Logo from '../public/logo.jpg';
 import Image from 'next/image';
 import { useAuth } from '../context/AuthContext';
-import {LoadingOverlay} from '../common Helpers/circularLoading'; // Import the overlay
+import {LoadingOverlay} from '../commonHelpers/circularLoading'; // Import the overlay
 
 const SSOLogin: React.FC = () => {
     const { login: contextLogin, oauthLogin, loading } = useAuth(); // Use loading state

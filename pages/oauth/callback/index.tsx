@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import {CircularLoading} from '@/common Helpers/circularLoading';
+import {CircularLoading} from '@/commonHelpers/circularLoading';
 // import { useAuth } from '../../../contexts/AuthContext';
 
 const Callback: React.FC = () => {
   const router = useRouter();
 //   const { setUser } = useAuth();
   const [loading, setLoading] = useState(true);
-  const tokenUrl = process.env.NEXT_PUBLIC_OAUTH_TOKEN_URL
+  const tokenUrl = '/api/userservice/oauth2/token'
   const clientId = process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID;
   const clientSecret = process.env.NEXT_PUBLIC_OAUTH_CLIENT_SECRET;
 
