@@ -8,7 +8,7 @@ image:
   repository: vishnu11759/e-dukan-ui
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "adb6633b7ffad6517389555dd8cbdf9168cadeba"
+  tag: "484d49e1dd263b46097cca9a5ad7ff930543902d"
 
 ingress:
   enabled: false
