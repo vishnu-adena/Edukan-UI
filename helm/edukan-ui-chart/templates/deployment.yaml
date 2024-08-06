@@ -1,0 +1,22 @@
+# This is a sample deployment manifest file for a simple web application.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edukan-ui
+  labels:
+    app: edukan-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: edukan-ui
+  template:
+    metadata:
+      labels:
+        app: edukan-ui
+    spec:
+      containers:
+      - name: edukan-ui
+        image: vishnu11759/e-dukan-ui:{{.Values.image.tag}}
+        ports:
+        - containerPort: 3000
