@@ -17,6 +17,13 @@ spec:
     spec:
       containers:
       - name: edukan-ui
-        image: vishnu11759/e-dukan-ui:{{.Values.image.tag}}
+        image: vishnu11759/e-dukan-ui:{{ .Values.image.tag }}
         ports:
         - containerPort: 3000
+        resources:
+          requests:
+            cpu: {{ .Values.resources.requests.cpu }}
+            memory: {{ .Values.resources.requests.memory }}
+          limits:
+            cpu: {{ .Values.resources.limits.cpu }}
+            memory: {{ .Values.resources.limits.memory }}

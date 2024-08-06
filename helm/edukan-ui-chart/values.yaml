@@ -10,6 +10,14 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "484d49e1dd263b46097cca9a5ad7ff930543902d"
 
+resources:
+  requests:
+    cpu: "250m"
+    memory: "512Mi"
+  limits:
+    cpu: "500m"
+    memory: "1Gi"
+    
 ingress:
   enabled: false
   className: ""
