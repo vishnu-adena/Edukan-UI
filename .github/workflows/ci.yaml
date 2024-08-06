@@ -1,8 +1,5 @@
-# CICD using GitHub actions
-
 name: CI/CD
 
-# Exclude the workflow to run on changes to the helm chart
 on:
   push:
     branches:
@@ -21,8 +18,19 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18' # Adjust the Node.js version as needed
+
+    - name: Install dependencies
+      run: npm install
+
     - name: Build
       run: npm run build
+
+    - name: Test
+      run: npm test
   
   code-quality:
     runs-on: ubuntu-latest
@@ -30,11 +38,10 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
 
-
+    - name: Run ESLint
+      run: npm run lint
+  
   push:
     runs-on: ubuntu-latest
 
@@ -53,13 +60,13 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_TOKEN }}
 
-    - name: Build and Push action
+    - name: Build and Push Docker image
       uses: docker/build-push-action@v6
       with:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/e-dukan-ui:${{github.run_id}}
+        tags: ${{ secrets.DOCKER_USERNAME }}/edukan-ui:${{ github.sha }}
 
   update-newtag-in-helm-chart:
     runs-on: ubuntu-latest
@@ -74,7 +81,7 @@ jobs:
 
     - name: Update tag in Helm chart
       run: |
-        sed -i 's/tag: .*/tag: "${{github.run_id}}"/' helm/edukan-ui-chart/values.yaml
+        sed -i 's/tag: .*/tag: "${{ github.sha }}"/' helm/edukan-ui-chart/values.yaml
 
     - name: Commit and push changes
       run: |
@@ -83,5 +90,3 @@ jobs:
         git add helm/edukan-ui-chart/values.yaml
         git commit -m "Update tag in Helm chart"
         git push
-
-
