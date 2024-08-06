@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: vishnu11759/e-dukan-ui
+  repository: vishnu11759/edukan-ui
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: "484d49e1dd263b46097cca9a5ad7ff930543902d"
@@ -17,7 +17,7 @@ resources:
   limits:
     cpu: "500m"
     memory: "1Gi"
-    
+
 ingress:
   enabled: false
   className: ""

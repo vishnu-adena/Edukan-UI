@@ -54,7 +54,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_USERNAME }}/edukan-ui:${{ github.sha }}
+        tags: ${{ secrets.DOCKER_USERNAME }}/edukan-ui:${{ github.run_id }}
 
   update-newtag-in-helm-chart:
     runs-on: ubuntu-latest
@@ -69,7 +69,7 @@ jobs:
 
     - name: Update tag in Helm chart
       run: |
-        sed -i 's/tag: .*/tag: "${{ github.sha }}"/' helm/edukan-ui-chart/values.yaml
+        sed -i 's/tag: .*/tag: "${{ github.run_id }}"/' helm/edukan-ui-chart/values.yaml
 
     - name: Commit and push changes
       run: |
