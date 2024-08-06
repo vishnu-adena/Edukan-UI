@@ -77,4 +77,5 @@ jobs:
         git config --global user.name "Vishnu Vardhan" 
         git add helm/edukan-ui-chart/values.yaml
         git commit -m "Update tag in Helm chart"
+        git pull --rebase origin main  # Pull the latest changes
         git push
