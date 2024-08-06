@@ -1,0 +1,21 @@
+# Ingress resource for the application
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: edukan-ui
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: www.adenavishnu.live
+    http:
+      paths: 
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: edukan-ui
+            port:
+              number: 80
+
