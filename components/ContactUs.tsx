@@ -1,7 +1,7 @@
 // pages/ContactUsPage.tsx
 
 import FileUploader from "@/commonHelpers/fileUploader";
-import DragAndDropUpload from "./dragAndDrop";
+
 
 const ContactUsPage: React.FC = () => {
     return (
