@@ -2,16 +2,18 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { Button, Container, Grid, Paper, Modal, TextField, Typography, Box } from '@mui/material';
+import { Button, Container, Grid, Paper, Modal, TextField, Typography, Box, IconButton } from '@mui/material';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import CloseIcon from '@mui/icons-material/Close';
 import useAuth from '@/customhooks/useAuth';
 import { product } from '@/apiUtils/productsapi';
-import { Card } from '@/components/product';
+import Card  from '@/components/productInDashboard';
+import Images from '@/commonHelpers/imageuploader';
 
 const DashboardPage: React.FC = () => {
   const router = useRouter();
-  const { user, isLoggedIn,token } = useAuth();
+  const { user, isLoggedIn, token } = useAuth();
   const [products, setProducts] = useState<any[]>([]);
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -19,7 +21,7 @@ const DashboardPage: React.FC = () => {
     description: '',
     price: 0,
     category: '',
-    image: null as File | null,
+    images: [], // Array to hold the image URLs
   });
 
   useEffect(() => {
@@ -30,7 +32,7 @@ const DashboardPage: React.FC = () => {
     try {
       const response = await product.get('/api/productservice/products/user');
       setProducts(response?.data);
-      console.log(1234, response);
+      
     } catch (error) {
       console.error('Error fetching cards:', error);
     }
@@ -44,29 +46,29 @@ const DashboardPage: React.FC = () => {
   const handleClose = () => setOpen(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, files } = e.target;
-    if (name === 'image' && files) {
-      setFormData((prevData) => ({ ...prevData, image: files[0] }));
-    } else {
-      setFormData((prevData) => ({ ...prevData, [name]: value }));
-    }
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleImageUpload = (uploadedImages: any) => {
+    setFormData((prevData) => ({ ...prevData, images: uploadedImages }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const formDataToSend = new FormData();
-    formDataToSend.append('image', formData.image as Blob);
-    formDataToSend.append('product', JSON.stringify({
+
+   var product ={
       title: formData.name,
       description: formData.description,
       price: formData.price,
       category: formData.category,
-    }));
+      image: formData.images, // Include image URLs in the request payload
+    };
 
     try {
-      const response = await axios.post('/api/productservice/products', formDataToSend, {
+      
+      const response = await axios.post('/api/productservice/products', product, {
         headers: {
-          'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`, // Include the token here
         },
       });
@@ -127,7 +129,7 @@ const DashboardPage: React.FC = () => {
         </Grid>
       </Container>
 
-      <Modal open={open} onClose={handleClose}>
+      <Modal open={open} >
         <Box
           component="form"
           sx={{
@@ -135,14 +137,29 @@ const DashboardPage: React.FC = () => {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 400,
+            width: '90%', // Use 90% of the viewport width
+            maxWidth: '600px', // Set a maximum width
+            maxHeight: '90vh', // Set a maximum height of 90% of the viewport height
             bgcolor: 'background.paper',
             border: '2px solid #000',
             boxShadow: 24,
             p: 4,
+            overflowY: 'auto', // Enable vertical scrolling if content overflows
           }}
           onSubmit={handleSubmit}
         >
+          <IconButton
+            aria-label="close"
+            onClick={handleClose}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
           <Typography variant="h6" component="h2">
             Add New Product
           </Typography>
@@ -184,19 +201,7 @@ const DashboardPage: React.FC = () => {
             name="category"
             onChange={handleChange}
           />
-          <input
-            accept="image/*"
-            style={{ display: 'none' }}
-            id="image-upload"
-            type="file"
-            name="image"
-            onChange={handleChange}
-          />
-          <label htmlFor="image-upload">
-            <Button variant="contained" component="span">
-              Upload Image
-            </Button>
-          </label>
+          <Images label="Upload Image" multiple={false} onUpload={handleImageUpload} />
           <Button type="submit" fullWidth variant="contained" color="primary" sx={{ mt: 2 }}>
             Add Product
           </Button>

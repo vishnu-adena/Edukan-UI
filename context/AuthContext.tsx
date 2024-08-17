@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const login = async (username: string, password: string) => {
         try {
-            debugger
+            
             const response = await axios.post(`${apiGateway}/${userServiceId}/auth2/login`, { email: username, password });
             const token = response?.data?.access_token;
             localStorage.setItem('token', token);

@@ -16,7 +16,6 @@ const Callback: React.FC = () => {
   useEffect(() => {
     const handleAuth = async () => {
       if (router.isReady) {
-        debugger
         const code = router.query.code as string;
         if (code) {
           const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');

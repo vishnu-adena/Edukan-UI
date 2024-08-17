@@ -27,7 +27,7 @@ const RegistrationPage: React.FC = () => {
             }
             // Register user
             const data = await registerUser(name, email, password);
-            console.log('Registration successful:', data);
+           
             // Redirect user to login page or another page upon successful registration
         } catch (error) {
             console.error('Registration failed:', error);

@@ -43,7 +43,7 @@ const FileUploader: React.FC<ImageUploaderProps> = ({ onUpload }) => {
                     "Authorization": `Bearer ${localStorage.getItem('token')}`
                 },
             });
-            console.log('Response data:', response.data);
+            
             setImages(response.data);
             onUpload(response.data);
         } catch (error) {

@@ -12,11 +12,10 @@ const RegistrationPage: React.FC = () => {
     //`${process.env.NEXT_PUBLIC_API_URL}/${process.env.NEXT_PUBLIC_USER_SERVICE}`
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        debugger
+
         e.preventDefault();
         setLoading(true);
 
-        console.log('Form values:', { name, email, password, rememberMe });
 
         try {
             const response = await axios.post(`${registration_Url}userservice/auth2/register`, {
@@ -31,7 +30,6 @@ const RegistrationPage: React.FC = () => {
                 window.location.href = '/RegistrationSuccess';
             }
 
-            console.log('Registration successful!');
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 setError(error.response.data.message || 'Registration failed');
