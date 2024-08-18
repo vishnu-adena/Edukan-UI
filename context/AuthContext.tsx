@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import { login_API, user_API, validate_token_API } from '@/API-Links/userservice';
 
 interface User {
     email: string;
@@ -68,7 +69,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const login = async (username: string, password: string) => {
         try {
             
-            const response = await axios.post(`${login_API}`, { email: username, password });
+            const response = await axios.post(`${login_API}`, { email: username, password:password });
             const token = response?.data?.access_token;
             localStorage.setItem('token', token);
             await fetchUserDetails(token);

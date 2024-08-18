@@ -5,7 +5,7 @@ const auth2 = "auth2"
 
 
 
-const register_API = `${API}/${user_service}/${auth2}/register`;
-const login_API = `${API}/${user_service}/${auth2}/login`;
-const validate_token_API = `${API}/${user_service}/${auth}/validate-token`;
-const user_API = `${API}/${user_service}/${auth}/user`;
+export const register_API = `${API}/${user_service}/${auth2}/register`;
+export const login_API = `${API}/${user_service}/${auth2}/login`;
+export const validate_token_API = `${API}/${user_service}/${auth}/validate-token`;
+export const user_API = `${API}/${user_service}/${auth}/user`;

@@ -16,6 +16,7 @@ const SSOLogin: React.FC = () => {
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
+        debugger
         e.preventDefault();
         setIsLoading(true)
         try {
