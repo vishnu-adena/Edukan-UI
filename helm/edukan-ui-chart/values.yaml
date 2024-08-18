@@ -8,7 +8,7 @@ image:
   repository: vishnu11759/edukan-ui
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "10270114026"
+  tag: "10434364024"
 
 resources:
   requests:
