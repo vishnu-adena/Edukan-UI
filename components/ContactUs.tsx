@@ -1,6 +1,5 @@
 // pages/ContactUsPage.tsx
 
-import FileUploader from "@/commonHelpers/fileUploader";
 
 
 const ContactUsPage: React.FC = () => {
@@ -13,7 +12,6 @@ const ContactUsPage: React.FC = () => {
           <label htmlFor="fileInput">Choose a file:</label>
           <input type="file" id="fileInput" />
         </div>
-        <FileUploader onUpload={()=>"hello"}/>
       </div>
 
     );

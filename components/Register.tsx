@@ -8,7 +8,7 @@ const RegistrationPage: React.FC = () => {
     const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const registration_Url = '/api/'//'http://localhost:8672/userservice/'
+    const api = 'api'//'http://localhost:8672/userservice/'
     //`${process.env.NEXT_PUBLIC_API_URL}/${process.env.NEXT_PUBLIC_USER_SERVICE}`
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -18,7 +18,7 @@ const RegistrationPage: React.FC = () => {
 
 
         try {
-            const response = await axios.post(`${registration_Url}userservice/auth2/register`, {
+            const response = await axios.post(`/${api}/userservice/auth2/register`, {
                 name,
                 email,
                 password,

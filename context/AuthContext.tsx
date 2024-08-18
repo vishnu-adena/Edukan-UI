@@ -30,15 +30,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [loading, setLoading] = useState(true);
     const [token, setToken] = useState<string | null>(null);
     const router = useRouter();
-    const apiGateway = '/api/';
-    const userServiceId = process.env.NEXT_PUBLIC_USER_SERVICE;
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         setToken(token)
         if (token) {
             // Validate the token
-            axios.get(`${apiGateway}/${userServiceId}/auth/validate-token`, {
+            axios.get(`${validate_token_API}`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
                 .then(() => {
@@ -56,7 +54,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const fetchUserDetails = async (token: string) => {
         try {
-            const response = await axios.get(`${apiGateway}/${userServiceId}/auth/user`, {
+            const response = await axios.get(`${user_API}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUser(response.data);
@@ -70,7 +68,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const login = async (username: string, password: string) => {
         try {
             
-            const response = await axios.post(`${apiGateway}/${userServiceId}/auth2/login`, { email: username, password });
+            const response = await axios.post(`${login_API}`, { email: username, password });
             const token = response?.data?.access_token;
             localStorage.setItem('token', token);
             await fetchUserDetails(token);

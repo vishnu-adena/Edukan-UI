@@ -99,6 +99,7 @@ const SSOLogin: React.FC = () => {
                         </div>
                         <div>
                             <button
+                
                                 type="submit"
                                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                             >
@@ -108,7 +109,9 @@ const SSOLogin: React.FC = () => {
                         <div id="error-message" className="text-red-500 text-sm text-center mt-4 hidden">
                             Error message goes here
                         </div>
-                        <div className="text-sm text-center">
+                       
+                    </form>
+                    <div className="text-sm text-center">
                             <p className="text-gray-600">Or sign in with</p>
                             <div className="flex space-x-4 justify-center mt-3">
                                 <button 
@@ -126,7 +129,6 @@ const SSOLogin: React.FC = () => {
                                 </button>
                             </div>
                         </div>
-                    </form>
                 </div>
                 {isLoading && <LoadingOverlay />} {/* Show the overlay when loading */}
             </div>
